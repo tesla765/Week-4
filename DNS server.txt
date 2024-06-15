@@ -1,0 +1,60 @@
+Set up a domain, setup a server on a VM and use the DNS server for traffic
+
+Step 1: Purchase a Domain Name
+First, you need to purchase a domain name from a domain registrar like GoDaddy, Namecheap, or Google Domains.
+
+Step 2: Set Up a Virtual Machine and Install a Web Server
+Create a Resource Group:
+
+sh
+Copy code
+az group create --name MyResourceGroup --location eastus
+Create a Virtual Network and Subnet:
+
+sh
+Copy code
+az network vnet create \
+  --resource-group MyResourceGroup \
+  --name MyVnet \
+  --address-prefix 10.0.0.0/16 \
+  --subnet-name MySubnet \
+  --subnet-prefix 10.0.1.0/24
+Create a Public IP Address:
+
+sh
+Copy code
+az network public-ip create --resource-group MyResourceGroup --name MyPublicIP
+Create a Network Interface:
+
+sh
+Copy code
+az network nic create \
+  --resource-group MyResourceGroup \
+  --name MyNic \
+  --vnet-name MyVnet \
+  --subnet MySubnet \
+  --public-ip-address MyPublicIP
+Create a Virtual Machine:
+
+sh
+Copy code
+az vm create \
+  --resource-group MyResourceGroup \
+  --name MyVM \
+  --nics MyNic \
+  --image UbuntuLTS \
+  --admin-username azureuser \
+  --generate-ssh-keys
+Install a Web Server on the VM:
+
+sh
+Copy code
+ssh azureuser@<public_ip_address>
+
+# Install Nginx
+sudo apt update
+sudo apt install nginx -y
+
+# or Install Apache
+sudo apt update
+sudo apt install apache2 -y
